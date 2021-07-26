@@ -1,8 +1,14 @@
+import 'package:chat_app/services/auth.dart';
+import 'package:chat_app/views/chat_rooms_screen.dart';
 import 'package:chat_app/widgets/widget.dart';
 import 'package:flutter/material.dart';
 
+
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+  const SignUp({Key? key, required this.toggle}) : super(key: key);
+
+  final Function toggle;
+  const SignUp.fromSignUp(this.toggle, {Key? key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -10,13 +16,30 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
 
-  final formKey = GlobalKey<FormFieldState>();
+  bool isLoading = false;
+
+  AuthMethods authMethods = AuthMethods();
+
+  final formKey = GlobalKey<FormState>();
   TextEditingController userNameTextEditingController = TextEditingController();
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
 
   signMeUp(){
     if (formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      }
+      );
+
+      authMethods.signInWithEmailAndPassword(emailTextEditingController.text,
+          passwordTextEditingController.text).then((val){
+            // print('${val.uid}');
+            
+            Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => ChatRoom()
+            ));
+      });
 
     }
   }
@@ -28,7 +51,9 @@ class _SignUpState extends State<SignUp> {
         preferredSize: const Size.fromHeight(60.0),
         child: appBarMain(BuildContext),
       ),
-      body: SingleChildScrollView(
+      body: isLoading ? Container(
+        child: const Center(child: CircularProgressIndicator()),
+      ) :SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height - 58.0,
           alignment: Alignment.bottomCenter,
@@ -39,66 +64,33 @@ class _SignUpState extends State<SignUp> {
               children: [
                 Form(
                   key: formKey,
-                  // child: Column(
-                  //   children: [
-                  //     //  ||
-                  //     TextFormField(
-                  //       validator: (val) {
-                  //         return val!.isEmpty || val.length < 2
-                  //             ? 'Please provide valid username'
-                  //             : null;
-                  //         },
-                  //       controller: userNameTextEditingController,
-                  //       style: simpleTextStyle(),
-                  //       decoration: textFieldInputDecoration('username'),
-                  //     ),
-                  //     TextFormField(
-                  //       validator: (val){
-                  //         return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  //             .hasMatch(val!) ?
-                  //               null : "Enter correct email";
-                  //              },
-                  //       controller: emailTextEditingController,
-                  //       style: simpleTextStyle(),
-                  //       decoration: textFieldInputDecoration('email'),
-                  //     ),
-                  //     TextFormField(
-                  //       validator: (val){
-                  //         return val!.length > 6 ? null : 'Provide 6+ character password';
-                  //       },
-                  //       controller: passwordTextEditingController,
-                  //       style: simpleTextStyle(),
-                  //       decoration: textFieldInputDecoration('password'),
-                  //     ),
-                  //   ],
-                  // ),
                   child: Column(
                     children: [
                       //  ||
                       TextFormField(
                         validator: (val) {
-                          return val==null || val.isEmpty || val.length < 2
+                          return val!.isEmpty || val.length < 2
                               ? 'Please provide valid username'
                               : null;
-                        },
+                          },
                         controller: userNameTextEditingController,
                         style: simpleTextStyle(),
                         decoration: textFieldInputDecoration('username'),
                       ),
                       TextFormField(
                         validator: (val){
-                          if(val==null) return "Enter email";
                           return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                              .hasMatch(val) ?
-                          null : "Enter correct email";
-                        },
+                              .hasMatch(val!) ?
+                                null : "Enter correct email";
+                               },
                         controller: emailTextEditingController,
                         style: simpleTextStyle(),
                         decoration: textFieldInputDecoration('email'),
                       ),
                       TextFormField(
+                        obscureText: true,
                         validator: (val){
-                          return val == null || val.length < 6 ? 'Provide 6+ character password' : null;
+                          return val!.length > 6 ? null : 'Provide 6+ character password';
                         },
                         controller: passwordTextEditingController,
                         style: simpleTextStyle(),
@@ -156,11 +148,19 @@ class _SignUpState extends State<SignUp> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Already have an account? ", style: mediumTextStyle(),),
-                    const Text('Sign In now!', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17.0,
-                      decoration: TextDecoration.underline,
-                    ),
+                    GestureDetector(
+                      onTap: (){
+                        widget.toggle();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.0,),
+                        child: const Text('Sign In now!', style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17.0,
+                          decoration: TextDecoration.underline,
+                        ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

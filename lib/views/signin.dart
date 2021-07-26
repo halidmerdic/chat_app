@@ -4,7 +4,10 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui';
 
 class SignIn extends StatefulWidget with PreferredSizeWidget {
-  const SignIn({Key? key}) : super(key: key);
+  const SignIn({Key? key, required this.toggle}) : super(key: key);
+
+  final Function toggle;
+  SignIn.fromSignIn(this.toggle, {Key? key}) : super(key: key);
 
   @override
   _SignInState createState() => _SignInState();
@@ -12,6 +15,7 @@ class SignIn extends StatefulWidget with PreferredSizeWidget {
   @override
   // TODO: implement preferredSize
   Size get preferredSize => throw UnimplementedError();
+
 
 }
 
@@ -84,11 +88,19 @@ class _SignInState extends State<SignIn> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Don't have an account? ", style: mediumTextStyle(),),
-                    const Text('Register now!', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17.0,
-                    decoration: TextDecoration.underline,
-                    ),
+                    GestureDetector(
+                      onTap: (){
+                        widget.toggle();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0,),
+                        child: const Text('Register now!', style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17.0,
+                        decoration: TextDecoration.underline,
+                        ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

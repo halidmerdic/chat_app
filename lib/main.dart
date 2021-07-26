@@ -1,10 +1,17 @@
 
 import 'package:chat_app/views/signup.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+import 'helper/authenticate.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ await Firebase.initializeApp();   runApp(MyApp()); }
+
+// void main() {
+//   runApp(const MyApp());
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -20,7 +27,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Color(0xff1F1F1F),
         primarySwatch: Colors.blue,
       ),
-      home: const SignUp(),
+      home: const Authenticate(),
     );
   }
 }
