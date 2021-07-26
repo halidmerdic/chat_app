@@ -15,24 +15,44 @@ class _SearchScreenState extends State<SearchScreen> {
   DatabaseMethods databaseMethods = DatabaseMethods();
   TextEditingController searchTextEditingController = TextEditingController();
 
-  late QuerySnapshot searchSnapshot;
+  QuerySnapshot? searchSnapshot;
 
   initiateSearch(){
     databaseMethods.getUserByUsername(searchTextEditingController.text).then((val) {
-      searchSnapshot = val;
+      setState(() {
+        searchSnapshot = val;
+      });;
     });
   }
 
+  /// create chatroom, send user to conversation screen, pushreplacement
+  createChatroomAndStartConversation(String userName){
+
+    List<String> users = [userName, ];
+
+    // to see what I need to implement delete .createChatRoom()
+    // something is missing in the ()
+    databaseMethods.createChatRoom();
+  }
+
   Widget SearchList(){
-    return ListView.builder(
-      itemCount: searchSnapshot.docs.length,
+    return searchSnapshot != null ? ListView.builder(
+      shrinkWrap: true,
+      itemCount: searchSnapshot!.docs.length,
       itemBuilder: (context, index){
         return SearchTile(
-            userName: searchSnapshot.docs[index].data['name'],
-            userEmail: searchSnapshot.docs[index].data["email"],
+            userName: searchSnapshot!.docs[index].get('name'),
+            userEmail: searchSnapshot!.docs[index].get('email'),
         );
       }
-    );
+    ) : Container();
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+
   }
 
   @override
@@ -102,27 +122,36 @@ class SearchTile extends StatelessWidget {
 
   final String userName;
   final String userEmail;
-  SearchTile({ required this.userName,  required this.userEmail});
+
+  //already been there because it is newer version of Flutter
+  // SearchTile({ required this.userName,  required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Row(
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(userName, style: simpleTextStyle(),),
-              Text(userEmail, style: simpleTextStyle(),),
+              Text(userName, style: mediumTextStyle(),),
+              Text(userEmail, style: mediumTextStyle(),),
             ],
           ),
           Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(30.0),
+          GestureDetector(
+            onTap: (){
+
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Text('Message', style: mediumTextStyle(),),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Text('Message'),
           ),
         ],
       ),
