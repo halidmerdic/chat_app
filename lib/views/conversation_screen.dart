@@ -27,9 +27,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
       stream: chatMessagesStream,
         builder: (context, snapshot){
         return ListView.builder(
-          itemCount: snapshot.data!.docs.lenght,
-            itemBuilder: (context, snapshot){
-            return
+          itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index){
+            return MessageTile(snapshot.data!.docs[index].data('message'), message: '',);
             });
     });
 
@@ -42,7 +42,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         'sendBy' : Constants.myName
       };
 
-      databaseMethods.getConversationMessages(widget.chatRoomId, messageMap);
+      databaseMethods.addConversationMessages(widget.chatRoomId, messageMap);
     }
   }
 
@@ -119,3 +119,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 }
+
+class MessageTile extends StatelessWidget {
+  const MessageTile(data, {Key? key, required this.message}) : super(key: key);
+  final String message;
+  // I have a constructor in line 124 (this.message)
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text('message'),
+    );
+  }
+}
+
