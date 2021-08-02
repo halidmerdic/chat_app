@@ -23,7 +23,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget ChatMessageList(){
 
-    return StreamBuilder(
+    return StreamBuilder<dynamic>(
       stream: chatMessagesStream,
         builder: (context, snapshot){
         return ListView.builder(
@@ -43,6 +43,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       };
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap);
+      messageController.text = '';
     }
   }
 
@@ -123,12 +124,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
 class MessageTile extends StatelessWidget {
   const MessageTile(data, {Key? key, required this.message}) : super(key: key);
   final String message;
-  // I have a constructor in line 124 (this.message)
+  // I have a constructor in 2 lines above (this.message)
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('message'),
+      child: Text('message', style: mediumTextStyle(),),
     );
   }
 }
