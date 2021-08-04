@@ -33,7 +33,8 @@ class DatabaseMethods {
   }
 
   getConversationMessages(String chatRoomId){
-    FirebaseFirestore.instance.collection('ChatRoom')
+    // I didn't have the return keyword in the line below
+    return FirebaseFirestore.instance.collection('ChatRoom')
         .doc(chatRoomId)
         .collection('chats')
         .snapshots();

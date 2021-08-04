@@ -29,7 +29,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index){
-            return MessageTile(snapshot.data!.docs[index].data('message'), message: '',);
+            return MessageTile(snapshot.data!.docs?[index].data() ?? ['message'], message: '', );
             });
     });
 
@@ -49,11 +49,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   void initState() {
-    databaseMethods.getConversationMessages(widget.chatRoomId).then((value){
-      setState(() {
-        chatMessagesStream = value;
-      });
-    });
+    // different chatMessageStream implementation or whatever
+    chatMessagesStream = databaseMethods.getConversationMessages(widget.chatRoomId);
     super.initState();
   }
 
@@ -62,11 +59,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
     return Scaffold(
         appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0),
-    child: appBarMain(BuildContext),
-    ),
+         child: appBarMain(BuildContext),
+        ),
       body: Container(
         child: Stack(
           children: [
+            ChatMessageList(),
             Container(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -129,7 +127,7 @@ class MessageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('message', style: mediumTextStyle(),),
+      child: Text(message, style: mediumTextStyle(),),
     );
   }
 }
