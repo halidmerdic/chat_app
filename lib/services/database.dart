@@ -32,16 +32,17 @@ class DatabaseMethods {
     });
   }
 
-  getConversationMessages(String chatRoomId){
+  getConversationMessages(String chatRoomId) async {
     // I didn't have the return keyword in the line below
-    return FirebaseFirestore.instance.collection('ChatRoom')
+     return FirebaseFirestore.instance.collection('ChatRoom')
         .doc(chatRoomId)
         .collection('chats')
+         .orderBy('time', descending: false)
         .snapshots();
   }
 
   addConversationMessages(String chatRoomId, messageMap){
-    return FirebaseFirestore.instance.collection('ChatRoom')
+      return FirebaseFirestore.instance.collection('ChatRoom')
         .doc(chatRoomId)
         .collection('chats')
         .add(messageMap).catchError((e){print(e.toString());});

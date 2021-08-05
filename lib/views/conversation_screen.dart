@@ -21,25 +21,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   late Stream chatMessagesStream;
 
-  Widget ChatMessageList(){
+  Widget ChatMessageList()  {
 
     return StreamBuilder<dynamic>(
       stream: chatMessagesStream,
         builder: (context, snapshot){
-        return ListView.builder(
+        if (!snapshot.hasData) {
+          return const CircularProgressIndicator();
+        } else{
+          return ListView.builder(
           itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index){
-            return MessageTile(snapshot.data!.docs?[index].data() ?? ['message'], message: '', );
-            });
+          itemBuilder: (context, index){
+
+            return MessageTile(snapshot.data!.docs[index].data()['message'], message: '',);
+
+          });
+          }
     });
 
   }
 
   sendMessage() {
     if (messageController.text.isNotEmpty) {
-      Map<String, String> messageMap = {
+      Map<String, dynamic> messageMap = {
         'message' : messageController.text,
-        'sendBy' : Constants.myName
+        'sendBy' : Constants.myName,
+        'time' : DateTime.now().millisecondsSinceEpoch,
       };
 
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap);
@@ -50,7 +57,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   void initState() {
     // different chatMessageStream implementation or whatever
-    chatMessagesStream = databaseMethods.getConversationMessages(widget.chatRoomId);
+    chatMessagesStream =
+        databaseMethods.getConversationMessages(widget.chatRoomId);
     super.initState();
   }
 
