@@ -8,7 +8,7 @@ class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
   // again I don't need
   // ConversationScreen(this.chatRoomId);
-  // I have it in line 6
+  // I have it in line somewhere above
 
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
@@ -19,27 +19,36 @@ class _ConversationScreenState extends State<ConversationScreen> {
   DatabaseMethods databaseMethods = DatabaseMethods();
   TextEditingController messageController = TextEditingController();
 
-  late Stream chatMessagesStream;
+   late Stream chatMessagesStream;
 
-  Widget ChatMessageList()  {
 
-    return StreamBuilder<dynamic>(
-      stream: chatMessagesStream,
-        builder: (context, snapshot){
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        } else{
-          return ListView.builder(
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index){
 
-            return MessageTile(snapshot.data!.docs[index].data()['message'], message: '',);
+  Widget ChatMessageList() {
 
-          });
-          }
+    var _chatMessagesStream;
+
+    setState(() {
+    _chatMessagesStream = chatMessagesStream;
     });
 
+
+    return FutureBuilder(
+        future: _chatMessagesStream,
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
+          } else {
+            return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  return MessageTile(
+                    snapshot.data!.docs[index].data()['message'], message: '',);
+                });
+          }
+        });
+
   }
+
 
   sendMessage() {
     if (messageController.text.isNotEmpty) {
