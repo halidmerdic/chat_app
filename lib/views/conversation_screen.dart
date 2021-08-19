@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key, required this.chatRoomId}) : super(key: key);
   final String chatRoomId;
-  // again I don't need
+  // again I don't need constructor
   // ConversationScreen(this.chatRoomId);
   // I have it in line somewhere above
 
@@ -25,24 +25,22 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget ChatMessageList() {
 
-    var _chatMessagesStream;
-
-    setState(() {
-    _chatMessagesStream = chatMessagesStream;
-    });
-
-
-    return FutureBuilder(
-        future: _chatMessagesStream,
+    return StreamBuilder(
+        stream: chatMessagesStream,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (!snapshot.hasData) {
             return const CircularProgressIndicator();
           } else {
             return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
+                // got rid of .doc in the line below after data!
+                // it shows CircularProgressIndicator()
+                // and it haven't done it before
+                itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   return MessageTile(
-                    snapshot.data!.docs[index].data()['message'], message: '',);
+                    // got rid of .doc[index] in the line below
+                  snapshot.data!.docs[index].data()['message'], message: '',
+                  );
                 });
           }
         });

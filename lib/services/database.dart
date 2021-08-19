@@ -32,13 +32,14 @@ class DatabaseMethods {
     });
   }
 
-  getConversationMessages(String chatRoomId) async {
+  getConversationMessages(String chatRoomId)  {
+    // I had async in a line above
     // I didn't have the return keyword in the line below
      return FirebaseFirestore.instance.collection('ChatRoom')
         .doc(chatRoomId)
         .collection('chats')
          .orderBy('time', descending: false)
-        .snapshots();
+        .get().then((value) => value.docs).asStream();
   }
 
   addConversationMessages(String chatRoomId, messageMap){
